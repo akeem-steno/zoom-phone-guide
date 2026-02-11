@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zoom Phone Migration - Interactive Learning Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f8fafc; min-height: 100vh; display: flex; justify-content: center; padding: 24px; }
+  .container { max-width: 600px; width: 100%; }
+
+  /* Welcome & Completion */
+  .hero { background: linear-gradient(135deg, #0f172a, #1e3a5f); border-radius: 20px; padding: 48px 32px; color: #fff; text-align: center; }
+  .hero-icon { font-size: 56px; margin-bottom: 16px; }
+  .hero h1 { margin: 0 0 8px; font-size: 26px; font-weight: 700; }
+  .hero .subtitle { margin: 0 0 4px; font-size: 15px; opacity: 0.7; }
+  .hero-divider { width: 40px; height: 3px; background: #3b82f6; border-radius: 2px; margin: 20px auto; }
+  .hero-desc { font-size: 15px; line-height: 1.7; opacity: 0.85; max-width: 440px; margin: 0 auto 32px; }
+  .stats { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+  .stat { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 20px; min-width: 90px; }
+  .stat-num { font-size: 22px; font-weight: 700; }
+  .stat-label { font-size: 12px; opacity: 0.6; margin-top: 2px; }
+
+  /* Buttons */
+  .btn-primary { padding: 14px 40px; font-size: 16px; font-weight: 600; background: #2563eb; color: #fff; border: none; border-radius: 12px; cursor: pointer; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-back { padding: 14px 20px; font-size: 15px; font-weight: 600; background: #f1f5f9; color: #475569; border: none; border-radius: 10px; cursor: pointer; }
+  .btn-back:hover { background: #e2e8f0; }
+  .btn-full { width: 100%; padding: 14px 0; font-size: 15px; font-weight: 600; background: #2563eb; color: #fff; border: none; border-radius: 10px; cursor: pointer; }
+  .btn-full:hover { background: #1d4ed8; }
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-row .btn-full { flex: 1; }
+
+  /* Progress */
+  .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .header-label { font-size: 13px; color: #94a3b8; font-weight: 500; }
+  .progress-bg { background: #e2e8f0; height: 6px; border-radius: 3px; margin-bottom: 24px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #7c3aed); border-radius: 3px; transition: width 0.4s ease; }
+  .section-title { margin: 0 0 24px; font-size: 22px; color: #0f172a; }
+
+  /* Teach */
+  .phase-label { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin: 0 0 16px; }
+  .phase-learn { color: #64748b; }
+  .phase-quiz { color: #7c3aed; }
+  .teach-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .teach-card { display: flex; gap: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; align-items: flex-start; }
+  .teach-card-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .teach-card-label { font-weight: 700; font-size: 14px; color: #1e293b; margin-bottom: 3px; }
+  .teach-card-text { font-size: 14px; color: #475569; line-height: 1.6; }
+  .tip-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 14px; margin-bottom: 24px; display: flex; gap: 10px; align-items: flex-start; }
+  .tip-icon { font-size: 16px; flex-shrink: 0; }
+  .tip-text { font-size: 13px; color: #92400e; line-height: 1.6; }
+
+  /* Quiz */
+  .quiz-q { font-size: 16px; line-height: 1.5; color: #1e293b; margin: 0 0 16px; font-weight: 500; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 12px 14px; font-size: 14px; text-align: left; background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; color: #334155; line-height: 1.4; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+  .quiz-opt:hover:not(.answered) { border-color: #94a3b8; }
+  .quiz-opt.correct { background: #f0fdf4; border-color: #22c55e; color: #166534; }
+  .quiz-opt.wrong { background: #fef2f2; border-color: #ef4444; color: #991b1b; }
+  .quiz-opt.answered { cursor: default; }
+  .opt-circle { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; background: #f1f5f9; color: #64748b; }
+  .opt-circle.correct { background: #22c55e; color: #fff; }
+  .opt-circle.wrong { background: #ef4444; color: #fff; }
+  .feedback { margin-top: 16px; padding: 14px; border-radius: 10px; font-size: 14px; line-height: 1.6; color: #334155; }
+  .feedback.correct { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .feedback.wrong { background: #fef2f2; border: 1px solid #fecaca; }
+  .feedback p { margin: 8px 0 0; }
+
+  /* Results */
+  .results-box { text-align: left; background: rgba(255,255,255,0.07); border-radius: 14px; padding: 20px; margin-bottom: 24px; }
+  .results-heading { margin: 0 0 14px; font-size: 13px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; }
+  .result-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; font-size: 14px; }
+  .result-row span:last-child { opacity: 0.9; }
+  .ref-box { background: rgba(255,255,255,0.07); border-radius: 14px; padding: 20px; margin-bottom: 24px; text-align: left; }
+  .ref-box div { font-size: 14px; line-height: 1.8; opacity: 0.85; }
+  .guru-link { display: block; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 16px; margin-bottom: 24px; text-decoration: none; color: #fff; text-align: left; }
+  .guru-link:hover { background: rgba(255,255,255,0.12); }
+  .guru-link-inner { display: flex; align-items: center; gap: 10px; }
+  .guru-link-title { font-weight: 600; font-size: 14px; }
+  .guru-link-sub { font-size: 13px; opacity: 0.7; margin-top: 2px; }
+
+  .score { font-size: 48px; font-weight: 700; margin: 16px 0 0; }
+  .score.high { color: #4ade80; }
+  .score.mid { color: #fbbf24; }
+  .score.low { color: #f87171; }
+  .score-label { font-size: 14px; opacity: 0.6; margin: 4px 0 20px; }
+  .score-msg { font-size: 15px; margin: 0 0 28px; line-height: 1.6; opacity: 0.85; }
+  .complete-icon { font-size: 52px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="container" id="app"></div>
+
+<script>
+var sections = [
+  { title:"Welcome", icon:"📞", teach:null, quiz:null },
+  { title:"What's Happening", icon:"📅",
+    teach:{ headline:"The Big Picture", points:[
+      {icon:"🔄",label:"What",text:"All Steno phone numbers are being migrated from Google Voice and RingCentral into Zoom Phone."},
+      {icon:"📅",label:"When",text:"Wednesday, February 11th at 8:30 am PT / 11:30 am ET."},
+      {icon:"🎯",label:"Why",text:"To unify all company phone numbers under one system — streamlining features, reporting, and scaling for the future."}
+    ], tip:"After this date, Google Voice and RingCentral will no longer be used for Steno calls."},
+    quiz:{q:"What two phone systems are being consolidated into Zoom Phone?",options:["Microsoft Teams & Slack","Google Voice & RingCentral","Vonage & RingCentral","Google Voice & Dialpad"],correct:1,explanation:"Google Voice and RingCentral numbers are both being ported into Zoom Phone to create one unified system."}
+  },
+  { title:"Using Zoom Phone", icon:"💡",
+    teach:{ headline:"How It Works", points:[
+      {icon:"✅",label:"Same App",text:"Zoom Phone lives inside the Zoom application you already have — no new downloads needed."},
+      {icon:"📱",label:"Mobile Too",text:"The Zoom app on iPhone and Android lets you make and take calls on the go."},
+      {icon:"👆",label:"Getting Started",text:"Click the Phone icon in your Zoom sidebar to access the dialer, voicemail, and SMS."}
+    ], tip:"Look for the phone handset icon in your Zoom sidebar — that's your new command center for calls."},
+    quiz:{q:"Where do you access Zoom Phone?",options:["A separate app you need to download","Inside the Zoom application you already use","Through a web browser portal","Via a Chrome extension"],correct:1,explanation:"No new installs needed. Zoom Phone is built into the same Zoom app you use for meetings — just click the Phone icon in the sidebar."}
+  },
+  { title:"Key Features", icon:"⚡",
+    teach:{ headline:"What You Can Do", points:[
+      {icon:"📞",label:"Calls",text:"Make and receive calls to coworkers and external numbers."},
+      {icon:"📩",label:"Voicemail",text:"Check voicemails directly in the Zoom app."},
+      {icon:"💬",label:"SMS",text:"Send and receive text messages from your business number."},
+      {icon:"📠",label:"Fax",text:"Receive faxes to your direct phone number when needed."}
+    ], tip:"All four features — calls, voicemail, SMS, and fax — are accessible from that single Phone tab in Zoom."},
+    quiz:{q:"Which of the following is NOT a feature available through Zoom Phone?",options:["Sending SMS text messages","Receiving faxes","Video conferencing with clients","Checking voicemail"],correct:2,explanation:"Zoom Phone handles calls, voicemail, SMS, and faxing. Video conferencing is a separate Zoom feature — not part of Zoom Phone specifically."}
+  },
+  { title:"Mobile App Setup", icon:"📱",
+    teach:{ headline:"Using Zoom Phone on Your Mobile Device", points:[
+      {icon:"📲",label:"Download",text:"Get the Zoom Workplace app from the Apple App Store (iOS) or Google Play Store (Android) — it's the same app you use for meetings."},
+      {icon:"🔑",label:"Sign In",text:"Open the app and sign in with your @steno.com Google account. If you have sign-in issues, you may need to enroll a Google passkey (check the Guru card for instructions)."},
+      {icon:"📍",label:"Find Phone",text:"From the Zoom home screen, tap More (bottom-right corner), then select Phone to access the dialer."},
+      {icon:"⚙️",label:"Navigate",text:"Tap Voicemail to listen to messages, SMS to view/reply to texts, or the Dial Pad icon (bottom-right) to place a call."}
+    ], tip:"You can dial external numbers using the keypad OR type an internal coworker's name to call them directly — no need to look up their number."},
+    quiz:{q:"How do you access Zoom Phone on the mobile app?",options:["Tap the Phone icon on the home screen","Tap More (bottom-right), then select Phone","Swipe left from the Meetings tab","It opens automatically when you sign in"],correct:1,explanation:"On mobile, Zoom Phone is found by tapping More in the bottom-right corner of the home screen, then selecting Phone from the menu."}
+  },
+  { title:"Videographer Essentials", icon:"🎥",
+    teach:{ headline:"What Videographers Need to Know", points:[
+      {icon:"🔄",label:"Start Using It Now",text:"Begin using Zoom Phone as soon as your number is ported and you've confirmed it's working. Zoom Phone is now your primary calling method."},
+      {icon:"📲",label:"Use the Zoom Workplace App",text:"All calls should go through the Zoom Workplace app → Phone tab (bottom-center on mobile). Do NOT answer calls inside the Zoom meeting application during depositions."},
+      {icon:"🎙️",label:"Calls During Meetings",text:"Zoom Phone can be configured so incoming calls don't interrupt your Zoom meeting audio. You can mute yourself in the meeting and take the call — similar to how RingCentral or Google Voice worked."},
+      {icon:"🗑️",label:"Remove Old Apps",text:"Once your number is fully ported and you've confirmed calls are working through Zoom Phone, you can delete Google Voice or RingCentral from your phone."}
+    ], tip:"Critical rule: during depositions, always answer calls through the Zoom Phone app on your phone — never through the Zoom meeting application."},
+    quiz:{q:"During a deposition, how should videographers answer incoming phone calls?",options:["Through the Zoom meeting application","Through the Zoom Phone app on their phone","Through Google Voice","They should not answer calls during depositions"],correct:1,explanation:"Videographers should always answer calls using the Zoom Phone app on their phone — not through the Zoom meeting application. Zoom Phone can be configured so incoming calls won't interrupt meeting audio."}
+  },
+  { title:"Getting Help", icon:"🆘",
+    teach:{ headline:"Where to Go for Support", points:[
+      {icon:"🟢",label:"Slack #it-support",text:"Now that everyone is ported over, use the #it-support Slack channel for any Zoom Phone questions or issues."}
+    ], tip:"#it-support is your go-to channel for all Zoom Phone help going forward."},
+    quiz:{q:"Where should you go for Zoom Phone support?",options:["#zoom-phone-migration","#general","#it-support","Email IT directly"],correct:2,explanation:"#it-support is your go-to Slack channel for any Zoom Phone questions or issues going forward."}
+  },
+  { title:"Complete!", icon:"🏆", teach:null, quiz:null }
+];
+
+var state = { step:0, phase:"teach", selected:null, answered:false, score:0, results:[] };
+var app = document.getElementById("app");
+var totalQuizzes = sections.filter(function(s){return s.quiz}).length;
+
+function render() {
+  var s = sections[state.step];
+  var progressPct = Math.round((state.step / (sections.length - 1)) * 100);
+
+  if (state.step === 0) {
+    app.innerHTML =
+      '<div class="hero">' +
+        '<div class="hero-icon">📞</div>' +
+        '<h1>Zoom Phone Migration</h1>' +
+        '<p class="subtitle">Interactive Learning Guide</p>' +
+        '<div class="hero-divider"></div>' +
+        '<p class="hero-desc">This guide will walk you through everything you need to know about Steno\'s phone migration — one topic at a time, with a quick check after each section to make sure it sticks.</p>' +
+        '<div class="stats">' +
+          '<div class="stat"><div class="stat-num">6</div><div class="stat-label">Topics</div></div>' +
+          '<div class="stat"><div class="stat-num">6</div><div class="stat-label">Knowledge Checks</div></div>' +
+          '<div class="stat"><div class="stat-num">~6</div><div class="stat-label">Minutes</div></div>' +
+        '</div>' +
+        '<button class="btn-primary" onclick="advance()">Let\'s Get Started →</button>' +
+      '</div>';
+    return;
+  }
+
+  if (state.step === sections.length - 1) {
+    var pct = Math.round((state.score / totalQuizzes) * 100);
+    var emoji = pct===100?"🏆":pct>=80?"🎉":pct>=60?"👍":"📖";
+    var msg = pct===100?"You nailed every question — you're fully prepared for the migration!":pct>=80?"Great work! You've got a strong handle on the key details.":pct>=60?"Good foundation! Review the topics you missed to lock it in.":"Worth another pass through the guide to solidify the details.";
+    var scoreClass = pct>=80?"high":pct>=60?"mid":"low";
+    var resultsHtml = state.results.map(function(r){return '<div class="result-row"><span>'+(r.correct?"✅":"❌")+'</span><span>'+r.title+'</span></div>';}).join("");
+
+    app.innerHTML =
+      '<div class="hero">' +
+        '<div class="complete-icon">'+emoji+'</div>' +
+        '<h1 style="font-size:24px">Learning Complete!</h1>' +
+        '<p class="score '+scoreClass+'">'+state.score+'/'+totalQuizzes+'</p>' +
+        '<p class="score-label">knowledge checks passed</p>' +
+        '<p class="score-msg">'+msg+'</p>' +
+        '<div class="results-box"><h3 class="results-heading">Your Results</h3>'+resultsHtml+'</div>' +
+        '<div class="ref-box">' +
+          '<h3 class="results-heading">Quick Reference</h3>' +
+          '<div>📅 <strong>Go-Live:</strong> Wed, Feb 11 at 8:30 am PT</div>' +
+          '<div>📱 <strong>Desktop:</strong> Phone icon in Zoom sidebar</div>' +
+          '<div>📲 <strong>Mobile:</strong> More → Phone in Zoom Workplace app</div>' +
+          '<div>🔑 <strong>Sign In:</strong> Use your @steno.com Google account</div>' +
+          '<div>🎥 <strong>Depositions:</strong> Answer calls via Zoom Phone app, NOT the meeting app</div>' +
+          '<div>🗑️ <strong>Old Apps:</strong> Remove Google Voice / RingCentral after confirming port</div>' +
+          '<div>💬 <strong>Need help:</strong> #it-support</div>' +
+        '</div>' +
+        '<a class="guru-link" href="https://app.getguru.com/card/cEq8bLgi/Using-Zoom-Phone-Call-Features" target="_blank" rel="noopener noreferrer">' +
+          '<div class="guru-link-inner"><span style="font-size:20px">📘</span><div><div class="guru-link-title">Want to learn more?</div><div class="guru-link-sub">View the full Zoom Phone Call Features Guru card →</div></div></div>' +
+        '</a>' +
+        '<button class="btn-primary" onclick="restart()">Start Over</button>' +
+      '</div>';
+    return;
+  }
+
+  var html = '';
+  html += '<div class="header-row"><span class="header-label">'+s.icon+' Section '+state.step+' of '+(sections.length-2)+'</span><span class="header-label">'+progressPct+'%</span></div>';
+  html += '<div class="progress-bg"><div class="progress-fill" style="width:'+progressPct+'%"></div></div>';
+  html += '<h2 class="section-title">'+s.title+'</h2>';
+
+  if (state.phase === "teach" && s.teach) {
+    html += '<p class="phase-label phase-learn">📖 Learn</p>';
+    html += '<div class="teach-cards">';
+    s.teach.points.forEach(function(p){
+      html += '<div class="teach-card"><span class="teach-card-icon">'+p.icon+'</span><div><div class="teach-card-label">'+p.label+'</div><div class="teach-card-text">'+p.text+'</div></div></div>';
+    });
+    html += '</div>';
+    if (s.teach.tip) {
+      html += '<div class="tip-box"><span class="tip-icon">💡</span><p class="tip-text"><strong>Pro Tip:</strong> '+s.teach.tip+'</p></div>';
+    }
+    html += '<div class="btn-row"><button class="btn-back" onclick="goBack()">← Back</button><button class="btn-full" onclick="advance()">Check Your Understanding →</button></div>';
+  }
+
+  if (state.phase === "quiz" && s.quiz) {
+    html += '<p class="phase-label phase-quiz">✏️ Knowledge Check</p>';
+    html += '<h3 class="quiz-q">'+s.quiz.q+'</h3>';
+    html += '<div class="quiz-options">';
+    s.quiz.options.forEach(function(opt, i){
+      var cls = "quiz-opt";
+      var circCls = "opt-circle";
+      var circText = String.fromCharCode(65+i);
+      if (state.answered) {
+        cls += " answered";
+        if (i === s.quiz.correct) { cls += " correct"; circCls += " correct"; circText = "✓"; }
+        else if (i === state.selected) { cls += " wrong"; circCls += " wrong"; circText = "✗"; }
+      }
+      html += '<button class="'+cls+'" onclick="handleSelect('+i+')"><span class="'+circCls+'">'+circText+'</span>'+opt+'</button>';
+    });
+    html += '</div>';
+
+    if (state.answered) {
+      var isRight = state.selected === s.quiz.correct;
+      html += '<div class="feedback '+(isRight?"correct":"wrong")+'"><strong>'+(isRight?"✅ That's right!":"❌ Not quite — here's the key takeaway:")+'</strong><p>'+s.quiz.explanation+'</p></div>';
+      var nextLabel = (state.step+1 >= sections.length-1) ? "See My Results →" : "Next Topic →";
+      html += '<div class="btn-row"><button class="btn-back" onclick="goBack()">← Back</button><button class="btn-full" onclick="advance()">'+nextLabel+'</button></div>';
+    } else {
+      html += '<div style="margin-top:16px"><button class="btn-back" onclick="goBack()">← Review Section</button></div>';
+    }
+  }
+
+  app.innerHTML = html;
+}
+
+function handleSelect(i) {
+  if (state.answered) return;
+  var s = sections[state.step];
+  state.selected = i;
+  state.answered = true;
+  var correct = i === s.quiz.correct;
+  if (correct) state.score++;
+  state.results.push({ title: s.title, correct: correct });
+  render();
+}
+
+function advance() {
+  var s = sections[state.step];
+  if (state.phase === "teach" && s.quiz) {
+    state.phase = "quiz";
+  } else {
+    state.step++;
+    state.phase = "teach";
+    state.selected = null;
+    state.answered = false;
+  }
+  render();
+}
+
+function goBack() {
+  if (state.phase === "quiz") {
+    state.phase = "teach";
+    state.selected = null;
+    state.answered = false;
+  } else if (state.step > 0) {
+    var prev = state.step - 1;
+    state.step = prev;
+    state.phase = (prev === 0) ? "teach" : sections[prev].quiz ? "quiz" : "teach";
+    state.selected = null;
+    state.answered = false;
+  }
+  render();
+}
+
+function restart() {
+  state = { step:0, phase:"teach", selected:null, answered:false, score:0, results:[] };
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
